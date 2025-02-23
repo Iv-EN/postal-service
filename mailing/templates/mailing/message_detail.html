@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+    Сведения о сообщении
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="row w-100">
+        <div class="col text-center d-flex">
+            <div class="card mb-4 w-100 d-flex flex-column justify-content-between h-100">
+                <div>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Тема: {{ message.topic }}</li>
+                        <li>Содержание: {{ message.text }}</li>
+                    </ul>
+                </div>
+                <div class="mt-auto mb-3">
+                    <a href="{% url 'mailing:message_list' %}" class="btn btn-primary">К списку сообщений</a>
+
+                        <a href="{% url 'mailing:message_update' message.pk %}" class="btn btn-warning">Редактировать</a>
+                        <a href="{% url 'mailing:message_delete' message.pk %}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

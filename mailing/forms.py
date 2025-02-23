@@ -1,80 +1,58 @@
 from django import forms
+from django.forms import BooleanField
 
-from .models import MailingRecipient, Message, Mailing
+from .models import Mailing, MailingRecipient, Message
 
 
-class MailingRecipientForm(forms.ModelForm):
+class StyleFormMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field, BooleanField):
+                field.widget.attrs["class"] = "form-check-input"
+            else:
+                field.widget.attrs["class"] = "form-control"
+
+
+
+class MailingRecipientForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = MailingRecipient
         fields = ["email", "name", "comment"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["email"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "placeholder": "Электронная почта",
-            }
-        )
-        self.fields["name"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "placeholder": "Фамилия Имя Отчество.",
-            }
-        )
-        self.fields["comment"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "placeholder": "Комментарий",
-            }
-        )
 
+class MailingForm(StyleFormMixin, forms.ModelForm):
+    start_sending = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"type": "datetime-local"}
+        ),
+        label="Дата и время начала отправки"
+    )
+    end_sending = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"type": "datetime-local"}
+        ),
+        label="Дата и время окончания отправки"
+    )
 
-class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = ["start_sending", "end_sending", "status", "message", "recipients"]
+        fields = [
+            "start_sending",
+            "end_sending",
+            "status",
+            "message",
+            "recipients",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["start_sending"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "type": "datetime-local",
-                "placeholder": "Дата и время начала отправки",
-            }
-        )
-        self.fields["end_sending"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "type": "datetime-local",
-                "placeholder": "Дата и время окончания отправки",
-            }
-        )
-        self.fields["status"].widget = forms.Select(
-            choices=Mailing.Status.choices,
-            attrs={"class": "form-control"},
-        )
         self.fields["message"].queryset = Message.objects.all()
         self.fields["recipients"].queryset = MailingRecipient.objects.all()
 
 
-class MessageForm(forms.ModelForm):
+
+class MessageForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Message
         fields = ["topic", "text"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["topic"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "placeholder": "Тема письма",
-            }
-        )
-        self.fields["text"].widget.attrs.update(
-            {
-                "class": "form-control",
-                "placeholder": "Содержание письма",
-            }
-        )

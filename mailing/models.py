@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.db import models
 
@@ -69,14 +68,12 @@ class Mailing(models.Model):
         related_name="mailings",
     )
 
-    def clean(self):
-        if self.start_sending >= self.end_sending:
-            raise ValidationError(
-                "Дата окончания рассылки не может быть раньше даты начала"
-            )
-
     def __str__(self):
         return f"Рассылка: {self.message.topic}"
+
+    def get_recipients(self):
+        """Возвращает получателей рассылки."""
+        return ", ".join([f"{recipient.name} <{recipient.email}>" for recipient in self.recipients.all()])
 
     class Meta:
         verbose_name = "Рассылка"

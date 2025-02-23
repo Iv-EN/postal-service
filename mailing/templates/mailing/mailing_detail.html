@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}
+    Сведения о рассылке
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="row w-100">
+        <div class="col text-center d-flex">
+            <div class="card mb-4 w-100 d-flex flex-column justify-content-between h-100">
+                <div>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Начало: {{ mailing.start_sending | date:"H:i d.m.Y" }}</li>
+                        <li>Окончание: {{ mailing.end_sending | date:"H:i d.m.Y" }}</li>
+                        <li>Статус: {{ mailing.get_status_display }}</li>
+                        <li>Сообщение: {{ mailing.message }}</li>
+                        <li>Получатели: {{ mailing.get_recipients }}</li>
+                    </ul>
+                </div>
+                <div class="mt-auto mb-3">
+                    <a href="{% url 'mailing:mailing_list' %}" class="btn btn-primary">К списку рассылок</a>
+
+                        <a href="{% url 'mailing:mailing_update' mailing.pk %}" class="btn btn-warning">Редактировать</a>
+                        <a href="{% url 'mailing:mailing_delete' mailing.pk %}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
