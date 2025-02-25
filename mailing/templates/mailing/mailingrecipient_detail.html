@@ -15,10 +15,9 @@
                     </ul>
                 </div>
                 <div class="mt-auto mb-3">
-                    <a href="{% url 'mailing:mailing_recipient_list' %}" class="btn btn-primary">К списку сообщений</a>
-
-                        <a href="{% url 'mailing:mailing_recipient_update' mailingrecipient.pk %}" class="btn btn-warning">Редактировать</a>
-                        <a href="{% url 'mailing:mailing_recipient_delete' mailingrecipient.pk %}" class="btn btn-danger">Удалить</a>
+                    <a href="{% url 'mailing:mailing_recipient_list' %}" class="btn btn-primary">К списку получателей</a>
+                    <a href="{% url 'mailing:mailing_recipient_update' mailingrecipient.pk %}" class="btn btn-warning">Редактировать</a>
+                    <a href="{% url 'mailing:mailing_recipient_delete' mailingrecipient.pk %}" class="btn btn-danger">Удалить</a>
                 </div>
             </div>
         </div>

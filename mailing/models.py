@@ -73,7 +73,12 @@ class Mailing(models.Model):
 
     def get_recipients(self):
         """Возвращает получателей рассылки."""
-        return ", ".join([f"{recipient.name} <{recipient.email}>" for recipient in self.recipients.all()])
+        return ", ".join(
+            [
+                f"{recipient.name} <{recipient.email}>"
+                for recipient in self.recipients.all()
+            ]
+        )
 
     class Meta:
         verbose_name = "Рассылка"

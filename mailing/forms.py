@@ -14,7 +14,6 @@ class StyleFormMixin:
                 field.widget.attrs["class"] = "form-control"
 
 
-
 class MailingRecipientForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = MailingRecipient
@@ -23,16 +22,12 @@ class MailingRecipientForm(StyleFormMixin, forms.ModelForm):
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
     start_sending = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local"}
-        ),
-        label="Дата и время начала отправки"
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        label="Дата и время начала отправки",
     )
     end_sending = forms.DateTimeField(
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local"}
-        ),
-        label="Дата и время окончания отправки"
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        label="Дата и время окончания отправки",
     )
 
     class Meta:
@@ -50,6 +45,15 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         self.fields["message"].queryset = Message.objects.all()
         self.fields["recipients"].queryset = MailingRecipient.objects.all()
 
+    def clean(self):
+        cleaned_data = super().clean()
+        start_sending = self.cleaned_data.get("start_sending")
+        end_sending = self.cleaned_data.get("end_sending")
+        if start_sending and end_sending and start_sending >= end_sending:
+            raise forms.ValidationError(
+                "Дата и время окончания рассылки должно быть больше даты и времени начала."
+            )
+        return cleaned_data
 
 
 class MessageForm(StyleFormMixin, forms.ModelForm):

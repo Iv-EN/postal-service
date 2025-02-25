@@ -10,6 +10,13 @@
     <div class="card-body">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="text-danger">
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% for field in form %}
             <div class="form-group">
                 {{ field.label }}
@@ -24,7 +31,12 @@
             <a href="{% if form.instance.topic %}
                         {% url 'mailing:message_list' %}
                      {% elif form.instance.status %}
-                        {% url 'mailing:mailing_list' %}{% endif %}" class="btn btn-warning">Отмена</a>
+                        {% url 'mailing:mailing_list' %}
+                     {% elif form.instance.email %}
+                        {% url 'mailing:mailing_recipient_list' %}
+                     {% else %}
+                        {% url 'mailing:home' %}
+                     {% endif %}" class="btn btn-warning">Отмена</a>
         </div>
     </form>
 </div>

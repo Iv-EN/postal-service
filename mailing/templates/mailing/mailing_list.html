@@ -31,6 +31,13 @@
                                 <div class="mt-auto mb-3">
                                     <a href="{% url 'mailing:mailing_detail' con.pk %}" class="btn btn-primary">Детали рассылки</a>
                                 </div>
+                            {% elif con.mailing %}
+                                <h5 class="card-title">{{ con.mailing }}</h5>
+                                <p class="card-text">Статус: {{ con.get_status_display }}</p>
+                                <p class="card-text">Дата и время попытки: {{ con.time_of_attempt | date:"H:i d.m.Y" }}</p>
+                                <p class="card-text">Ответ почтового сервера: {{ con.server_response }}</p>
+                            {% else %}
+                                <p class="card-text">Нет данных.</p>
                             {% endif %}
                         </div>
                     </div>

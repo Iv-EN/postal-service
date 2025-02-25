@@ -1,13 +1,26 @@
 from django.urls import path
 
 from .apps import MailingConfig
-from .views import (HomeView, MailingCreateView, MailingDeleteView,
-                    MailingDetailsView, MailingListView,
-                    MailingRecipientCreateView, MailingRecipientDeleteView,
-                    MailingRecipientListView, MailingRecipientUpdateView,
-                    MailingUpdateView, MessageCreateView, MessageDeleteView,
-                    MessageDetailsView, MessageListView, MessageUpdateView,
-                    MailingRecipientDetailsView)
+from .views import (
+    AttemptSendListView,
+    HomeView,
+    MailingCreateView,
+    MailingDeleteView,
+    MailingDetailsView,
+    MailingListView,
+    MailingRecipientCreateView,
+    MailingRecipientDeleteView,
+    MailingRecipientListView,
+    MailingRecipientUpdateView,
+    MailingUpdateView,
+    MessageCreateView,
+    MessageDeleteView,
+    MessageDetailsView,
+    MessageListView,
+    MessageUpdateView,
+    MailingRecipientDetailsView,
+    MailingSendView,
+)
 
 app_name = MailingConfig.name
 
@@ -18,9 +31,7 @@ urlpatterns = [
         name="home",
     ),
     path(
-        "recipients/",
-        MailingRecipientListView.as_view(),
-        name="mailing_recipient_list"
+        "recipients/", MailingRecipientListView.as_view(), name="mailing_recipient_list"
     ),
     path(
         "recipients/create/",
@@ -30,7 +41,7 @@ urlpatterns = [
     path(
         "recipients/<int:pk>/",
         MailingRecipientDetailsView.as_view(),
-        name="mailing_recipient_detail"
+        name="mailing_recipient_detail",
     ),
     path(
         "recipients/update/<int:pk>/",
@@ -42,51 +53,24 @@ urlpatterns = [
         MailingRecipientDeleteView.as_view(),
         name="mailing_recipient_delete",
     ),
+    path("messages/", MessageListView.as_view(), name="message_list"),
+    path("messages/<int:pk>/", MessageDetailsView.as_view(), name="message_detail"),
+    path("messages/create/", MessageCreateView.as_view(), name="message_create"),
     path(
-        "messages/",
-         MessageListView.as_view(),
-         name="message_list"
-         ),
-    path(
-        "messages/<int:pk>/",
-        MessageDetailsView.as_view(),
-        name="message_detail"
-        ),
-    path("messages/create/",
-         MessageCreateView.as_view(),
-         name="message_create"
-         ),
-    path(
-        "messages/update/<int:pk>/",
-        MessageUpdateView.as_view(),
-        name="message_update"
+        "messages/update/<int:pk>/", MessageUpdateView.as_view(), name="message_update"
     ),
     path(
-        "messages/delete/<int:pk>/",
-        MessageDeleteView.as_view(),
-        name="message_delete"
+        "messages/delete/<int:pk>/", MessageDeleteView.as_view(), name="message_delete"
     ),
-    path("mailings/",
-         MailingListView.as_view(),
-         name="mailing_list"
-         ),
-    path("mailings/create/",
-         MailingCreateView.as_view(),
-         name="mailing_create"
-         ),
+    path("mailings/", MailingListView.as_view(), name="mailing_list"),
+    path("mailings/create/", MailingCreateView.as_view(), name="mailing_create"),
     path(
-        "mailings/update/<int:pk>/",
-        MailingUpdateView.as_view(),
-        name="mailing_update"
+        "mailings/update/<int:pk>/", MailingUpdateView.as_view(), name="mailing_update"
     ),
     path(
-        "mailings/delete/<int:pk>/",
-        MailingDeleteView.as_view(),
-        name="mailing_delete"
+        "mailings/delete/<int:pk>/", MailingDeleteView.as_view(), name="mailing_delete"
     ),
-path(
-        "mailings/<int:pk>/",
-        MailingDetailsView.as_view(),
-        name="mailing_detail"
-    ),
+    path("mailings/<int:pk>/", MailingDetailsView.as_view(), name="mailing_detail"),
+    path("mailings/send/<int:pk>/", MailingSendView.as_view(), name="mailing_send"),
+    path("mailings/attempt/", AttemptSendListView.as_view(), name="attempt_send"),
 ]
