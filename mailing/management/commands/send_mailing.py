@@ -18,9 +18,7 @@ class Command(BaseCommand):
 
     def get_time(self):
         """Получает время в заданной временной зоне."""
-        current_time_utc = timezone.now()
-        current_time_local = timezone.localtime(current_time_utc)
-        return current_time_local
+        return timezone.localtime(timezone.now())
 
     def status_update(self):
         """Проверка и обновление статуса рассылки."""
@@ -43,6 +41,22 @@ class Command(BaseCommand):
                     f"Статус рассылки '{mailing.message.topic}' изменён на 'Завершена'"
                 )
 
+    def send_email(self, mailing, recipient):
+        """Отправляет письмо получателю и обрабатывает статус."""
+        name, email = recipient.split(" <")
+        email = email[:-1]
+        try:
+            response = send_mail(
+                mailing.message.topic,
+                mailing.message.text,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
+            return AttemptToSend.Status.SUCCESSFULLY, response
+        except Exception as e:
+            return AttemptToSend.Status.UNSUCCESSFULLY, str(e)
+
     def handle(self, *args, **kwargs):
         """Отправляет сообщения."""
         self.status_update()
@@ -57,33 +71,26 @@ class Command(BaseCommand):
                 end_sending__gte=current_time_local,
             )
         for mailing in mailings:
-            self.stdout.write(f"Обрабатывается рассылка: {mailing.message.topic}")
-            recipients = mailing.get_recipients().split(", ")
-            for recipient in recipients:
-                name, email = recipient.split(" <")
-                email = email[:-1]
-                try:
-                    response = send_mail(
-                        mailing.message.topic,
-                        mailing.message.text,
-                        settings.DEFAULT_FROM_EMAIL,
-                        [email],
-                        fail_silently=False,
-                    )
-                    status = AttemptToSend.Status.SUCCESSFULLY
-                    self.stdout.write(f"Письмо успешно отправлено {name} <{email}>")
-                except Exception as e:
-                    response = str(e)
-                    status = AttemptToSend.Status.UNSUCCESSFULLY
-            AttemptToSend.objects.create(
-                mailing=mailing,
-                status=status,
-                server_response=response,
+            self.stdout.write(
+                f"Обрабатывается рассылка: {mailing.message.topic}"
             )
+            recipients = mailing.get_recipients().split(", ")
+            attempts = []
+            for recipient in recipients:
+                status, response = self.send_email(mailing, recipient)
+                self.stdout.write(f"Письмо {status} отправлено {recipient}")
+                attempts.append(
+                    AttemptToSend(
+                        mailing=mailing,
+                        status=status,
+                        server_response=response,
+                    )
+                )
+            AttemptToSend.objects.bulk_create(attempts)
             if all(
                 attempt.status == AttemptToSend.Status.SUCCESSFULLY
-                for attempt in mailing.attempts.all()
+                for attempt in attempts
             ):
                 mailing.status = Mailing.Status.STARTED
                 mailing.save()
-        self.stdout.write(self.style.SUCCESS("Рассылка завершена!"))
+        self.stdout.write(self.style.SUCCESS("Рассылка завершена"))

@@ -25,10 +25,15 @@ class Migration(migrations.Migration):
                 (
                     "email",
                     models.CharField(
-                        max_length=30, unique=True, verbose_name="Электронная почта"
+                        max_length=30,
+                        unique=True,
+                        verbose_name="Электронная почта",
                     ),
                 ),
-                ("name", models.CharField(max_length=50, verbose_name="Ф.И.О.")),
+                (
+                    "name",
+                    models.CharField(max_length=50, verbose_name="Ф.И.О."),
+                ),
                 ("comment", models.TextField(verbose_name="Комментарий")),
             ],
             options={

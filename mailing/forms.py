@@ -5,6 +5,7 @@ from .models import Mailing, MailingRecipient, Message
 
 
 class StyleFormMixin:
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -15,12 +16,14 @@ class StyleFormMixin:
 
 
 class MailingRecipientForm(StyleFormMixin, forms.ModelForm):
+
     class Meta:
         model = MailingRecipient
         fields = ["email", "name", "comment"]
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
+
     start_sending = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}),
         label="Дата и время начала отправки",
@@ -35,14 +38,13 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         fields = [
             "start_sending",
             "end_sending",
-            "status",
             "message",
             "recipients",
         ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["message"].queryset = Message.objects.all()
+        self.user = user
         self.fields["recipients"].queryset = MailingRecipient.objects.all()
 
     def clean(self):
@@ -57,6 +59,7 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
 
 
 class MessageForm(StyleFormMixin, forms.ModelForm):
+
     class Meta:
         model = Message
         fields = ["topic", "text"]

@@ -7,7 +7,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("mailing", "0004_alter_mailing_status_alter_mailingrecipient_email_and_more"),
+        (
+            "mailing",
+            "0004_alter_mailing_status_alter_mailingrecipient_email_and_more",
+        ),
     ]
 
     operations = [
@@ -20,7 +23,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name="mailing",
-            options={"verbose_name": "Рассылка", "verbose_name_plural": "Рассылки"},
+            options={
+                "verbose_name": "Рассылка",
+                "verbose_name_plural": "Рассылки",
+            },
         ),
         migrations.AlterField(
             model_name="mailingrecipient",

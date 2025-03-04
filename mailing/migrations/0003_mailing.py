@@ -25,7 +25,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "start_sending",
-                    models.DateTimeField(verbose_name="Дата и время начала отправки"),
+                    models.DateTimeField(
+                        verbose_name="Дата и время начала отправки"
+                    ),
                 ),
                 (
                     "end_sending",

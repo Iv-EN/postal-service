@@ -6,7 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("mailing", "0005_alter_attempttosend_options_alter_mailing_options_and_more"),
+        (
+            "mailing",
+            "0005_alter_attempttosend_options_alter_mailing_options_and_more",
+        ),
     ]
 
     operations = [

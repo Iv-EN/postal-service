@@ -22,7 +22,12 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("topic", models.CharField(max_length=50, verbose_name="Тема письма")),
+                (
+                    "topic",
+                    models.CharField(
+                        max_length=50, verbose_name="Тема письма"
+                    ),
+                ),
                 ("text", models.TextField(verbose_name="Содержание письма")),
             ],
             options={

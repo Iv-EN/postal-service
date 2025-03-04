@@ -14,17 +14,25 @@
                         <li>Статус: {{ mailing.get_status_display }}</li>
                         <li>Сообщение: {{ mailing.message }}</li>
                         <li>Получатели: {{ mailing.get_recipients }}</li>
-                        <li>ID: {{ mailing.id }}</li>
+                        <li>Владелец: {{ mailing.owner }}</li>
                     </ul>
                 </div>
                 <div class="mt-auto mb-3">
                     <a href="{% url 'mailing:mailing_list' %}" class="btn btn-primary">К списку рассылок</a>
+                    {% if user.username == mailing.owner.username %}
                     <a href="{% url 'mailing:mailing_update' mailing.pk %}" class="btn btn-warning">Редактировать</a>
                     <a href="{% url 'mailing:mailing_delete' mailing.pk %}" class="btn btn-danger">Удалить</a>
                     <form action="{% url 'mailing:mailing_send' mailing.pk %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Отправить рассылку</button>
                     </form>
+                    {% elif is_manager_group %}
+                        <form method="post" action="{% url 'mailing:disable_mailing' mailing.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning mt-3">Отключить рассылку</button>
+                        </form>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
