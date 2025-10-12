@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <h3 class="text-center">{{ title }}</h3>
+    <p></p>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            {% for con in context %}
+                <div class="col">
+                    <div class="card">
+                        <div class="body">
+                            {% if con.name %}
+                                <h5 class="card-title">{{ con.name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ con.email }}</h6>
+                                <p class="card-text">{{ con.comment }}</p>
+                                <p>Владелец: {{ con.owner }}</p>
+                                <a href="{% url 'mailing:mailing_recipient_detail' con.pk %}" class="btn btn-primary">Посмотреть</a>
+                            {% elif con.topic %}
+                                <h5 class="card-title">Тема сообщения: {{ con.topic }}</h5>
+                                <p class="card-text">{{ con.text }}</p>
+                                <p>Владелец: {{ con.owner }}</p>
+                                <div class="mt-auto mb-3">
+                                    <a href="{% url 'mailing:message_detail' con.pk %}" class="btn btn-primary">Детали сообщения</a>
+                                </div>
+                            {% elif con.start_sending %}
+                                <h5 class="card-title">Рассылка: {{ con.message.topic }}</h5>
+                                <p class="card-text">Статус: {{ con.get_status_display }}</p>
+                                <p class="card-text">Начало рассылки: {{ con.start_sending | date:"H:i d.m.Y" }}</p>
+                                <p class="card-text">Конец рассылки: {{ con.end_sending | date:"H:i d.m.Y" }}</p>
+                                <p>Владелец: {{ con.owner }}</p>
+                                <div class="mt-auto mb-3">
+                                    <a href="{% url 'mailing:mailing_detail' con.pk %}" class="btn btn-primary">Детали рассылки</a>
+                                </div>
+                            {% elif con.mailing %}
+                                <h5 class="card-title">{{ con.mailing }}</h5>
+                                <p class="card-text">Статус: {{ con.get_status_display }}</p>
+                                <p class="card-text">Владелец рассылки: {{ con.mailing.owner.username }} ({{ con.mailing.owner.email }})</p>
+                                <p class="card-text">Получатель письма: {{ con.mailing.get_recipients }}</p>
+                                <p class="card-text">Дата и время попытки: {{ con.time_of_attempt | date:"H:i d.m.Y" }}</p>
+                                <p class="card-text">Ответ почтового сервера: {{ con.server_response }}</p>
+                            {% else %}
+                                <p class="card-text">Нет данных.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center">Пока не создано.</p>
+            {% endfor %}
+
+    </div>
+</div>
+{% endblock content %}

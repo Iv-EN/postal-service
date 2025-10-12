@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Управление пользователями{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row w-100">
+        <div class="col d-flex">
+                <div class="card-body">
+                  <h2>Список пользователей</h2>
+                    {% for user in users %}
+                        <li>
+                            {{ user.email }}
+                            {% if user.is_active %}
+                                <form method="post" action="{% url 'users:user_management' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit">Заблокировать</button>
+                                </form>
+                            {% else %}
+                                <span>Заблокирован</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
